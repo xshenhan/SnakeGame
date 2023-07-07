@@ -52,24 +52,45 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     QRect rect1 = getRect(board.xt, board.yt);
     painter.drawRect(rect1);*/
     /* draw snake */
-    Snake* msnake = game->getState()->getSnakes()[0];
-    painter.setBrush(Qt::red);
-    painter.setPen(Qt::red);
-    for (std::size_t i = 0; i < msnake->getLength(); i++) {
-        QRect rect = getRect(msnake->getBody()[i].first, msnake->getBody()[i].second);
-        painter.drawRect(rect);
+    for (int i=0; i<game->getState()->getSnakes().size(); ++i) {
+        Snake* snake = game->getState()->getSnakes()[i];
+        if (snake->getHealth() <= 0) {
+            continue;
+        }
+        painter.setBrush(Qt::red);
+        painter.setPen(Qt::red);
+        for (std::size_t i = 0; i < snake->getLength(); i++) {
+            QRect rect = getRect(snake->getBody()[i].first, snake->getBody()[i].second);
+            painter.drawRect(rect);
+        }
     }
+
     /* move */
-    if(!game_over) game_over = !game->runGame();
-    if(game_over && !is_emit) {
-        emit(gameover());
-        is_emit = true;
+    if (!game_over) {
+        try {
+            game->runGame();
+            QThread::msleep(5);
+            cnt_time++;
+            update();
+        }
+        catch (Death _) {
+            game_over = true;
+            if (!is_emit) {
+                emit(gameover());
+                is_emit = true;
+            }
+        }
     }
-    QThread::msleep(5);
-    if(!game_over) {
-        cnt_time++;
-        update();
-    }
+    // if(!game_over) game_over = !game->runGame();
+    // if(game_over && !is_emit) {
+    //     emit(gameover());
+    //     is_emit = true;
+    // }
+    // QThread::msleep(5);
+    // if(!game_over) {
+    //     cnt_time++;
+    //     update();
+    // }
     return QWidget::paintEvent(ev);
 }
 

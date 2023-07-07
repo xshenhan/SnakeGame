@@ -2,6 +2,9 @@
 
 using namespace std;
 
+// 用来 throw 的死亡信息
+Death::Death() {}
+
 Snake::Snake(vector<Loc> body, int length, int max_health, Direction direction, Grid* item_map_ptr) :
     body(body),
     length(length),
@@ -119,19 +122,20 @@ Loc Snake::nextLoc()
 
 bool Snake::move()
 {
+    /* ===== 全局时钟走过 (12 - speed) 个周期蛇才会进行动作 ===== */
     if (cycle_recorder != (12 - speed)) {
         cycle_recorder += 1;
         return false;
     } else {
         cycle_recorder = 1;
     }
+    /* ====================================================== */
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
-
-    Item* hit_item = hitItem();
-    if (hit_item != nullptr && hit_item->getName() != AEROLITE && hit_item->getName() != MARSH) {
-        hit_item->action(this);
+    if (hitSelf() || hitEdge()) {
+        death();
+        return false;
     }
     return true;
 }
@@ -214,6 +218,9 @@ void Snake::addLength(int adding)
 
 void Snake::addHealth(int adding) {
     this->health = min(this->health + adding, this->max_health);
+    if (health <= 0) {
+        death();
+    }
 }
 
 void Snake::initialize()
@@ -244,8 +251,8 @@ bool Snake::death()
                       item_map_ptr ).body;   // 用中间初始化的一条新蛇的身体来更新当前蛇的复活状态至地图中央
         return false;
     } else {
-        return true;
-        // TODO: 返回接口 传递死亡的信息
+        // 返回接口 传递死亡的信息
+        throw Death();
     }
 }
 

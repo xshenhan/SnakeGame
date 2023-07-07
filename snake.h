@@ -8,6 +8,12 @@ typedef std::vector<std::vector<Item*>> Grid;
 
 bool isWithin(int target, int low, int high);
 
+class Death
+{
+public:
+    Death();
+};
+
 class Snake
 {
 public:

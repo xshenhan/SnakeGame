@@ -38,16 +38,29 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
 
 bool Game::snakeAction(Snake *snake)
 {
-    // Snake* msnake = state->getSnakes()[0];
-    snake->move();   // 完成移动
-    if (snake->hitSelf() || snake->hitEdge()) {
-        return false;
-    }
+    snake->move();
+
     if (snake->hitOtherSnake(state->getSnakes())) {
-        bool dead = snake->death();
-        if (dead && snake == state->getSnakes()[0]) {
-            return false;
-        }
+        snake->death();
+        // return true;
+    }
+
+    // 如果能运行到这里, 说明成功复活了
+    // 即重新初始化了位置
+    Item* hit_item = snake->hitItem();
+    switch (hit_item->getName())
+    {
+    case BASIC: break;
+    case FOOD:
+    {
+        Loc location = state->createRandomLoc();
+    }
+
+    }
+
+    
+    if (hit_item != nullptr && hit_item->getName() != AEROLITE && hit_item->getName() != MARSH) {
+        hit_item->action(snake);
     }
     return true;
     // TODO: 判断胜负
@@ -283,6 +296,7 @@ bool TestAISnake::runGame() {
                     state->createItem(FOOD, location, 1);
                     break;
                 }
+                case OBSTACLE:
                 case WALL: {
                     // dead
                     return false;
