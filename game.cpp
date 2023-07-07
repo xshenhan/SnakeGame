@@ -4,7 +4,7 @@
 #include "AISnake.h"
 using namespace std;
 
-Game::Game(GameMode playMode, int height, int width, std::vector<int> info) :
+Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
     level(1),
     clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
     game_mode(game_mode)
@@ -44,24 +44,9 @@ bool Game::snakeAction(Snake *snake)
         snake->death();
         // return true;
     }
-
     // 如果能运行到这里, 说明成功复活了
     // 即重新初始化了位置
-    Item* hit_item = snake->hitItem();
-    switch (hit_item->getName())
-    {
-    case BASIC: break;
-    case FOOD:
-    {
-        Loc location = state->createRandomLoc();
-    }
 
-    }
-
-    
-    if (hit_item != nullptr && hit_item->getName() != AEROLITE && hit_item->getName() != MARSH) {
-        hit_item->action(snake);
-    }
     return true;
     // TODO: 判断胜负
 }
@@ -85,52 +70,51 @@ bool Game::runGame()
         Snake *snake = state->getSnakes()[i];
         if (i == 0) {
             if (!snakeAction(snake)) {  // 玩家没有成功移动, 直接结束游戏
+                // 现在 snakeAction 恒返回 true, 真正的死亡直接 throw Death()
                 return false;
             }
         } else {
             snakeAction(snake);
         }
 
-        if(snake->hitItem() != nullptr ) {
-            switch (snake->hitItem()->getName()) {
-                case FOOD:{
+        Item* hit_item = snake->hitItem();
+        if(hit_item != nullptr)
+        {
+            switch (hit_item->getName()) {
+            case FOOD:
+            {
+                hit_item->action(snake);
+                do {
                     location = state->createRandomLoc();
-                    while(snake->isPartOfSnake(location))
-                        location = state->createRandomLoc();
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    state->createItem(FOOD, location, 1);
-                    break;
-                }
-                case WALL: {
-                    // dead
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    return false;
-                }
-                case FIRSTAID:
-                case OBSTACLE: {
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    if (snake->getHealth() <= 0 && snake->death()) {
-                        return false;
-                    }
-                    break;
-                }
-                default:
-                    throw "Error: unknown item type";
+                } while (snake->isPartOfSnake(location));
+                state->createItem(BASIC, snake->getBody()[0], 0);
+                state->createItem(FOOD, location, 1);
+                break;
+            }
+            case MAGNET:
+            case SHIELD:
+            case FIRSTAID:
+            case OBSTACLE:
+            case WALL:
+            {
+                hit_item->action(snake);
+                break;
+            }
             }
         }
     }
 
     // 陨石和沼泽的特殊效果判断
-    /*for (vector<Item*> row: *state->getMapPtr()) {
+    for (vector<Item*> row: *state->getMapPtr()) {
         for (auto item: row) {
             if (item->getName() == AEROLITE || item->getName() == MARSH) {
                 // 对每个陨石看是否砸到了蛇; 对每个沼泽看是否有蛇在上面
                 // 砸到了任何一部分则另一个函数一定返回 nullptr, 因此不用 if-else 判断
-                item->action(item->hitHeadSnake(state->snakes));
-                item->action(item->hitBodySnake(state->snakes));
+                item->action(item->hitHeadSnake(state->getSnakes()));
+                item->action(item->hitBodySnake(state->getSnakes()));
             }
         }
-    }*/
+    }
     return true;
 }
 
@@ -269,53 +253,5 @@ void TestAISnake::initializeGame(int level) {
 }
 
 bool TestAISnake::runGame() {
-        //clock.run();
-
-        // 每个时钟周期设置物体
-        // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮周期
-        // 一些应该从文件中读取的数据 ===================== //
-        Loc location;
-        // ============================================= //
-        /*if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
-                state->createItem(type, location, info);
-        }*/
-
-        // 所有蛇进行行动
-        bool maction = true;
-        Snake* msnake = state->getSnakes()[0];
-        maction = snakeAction(msnake);
-        if(!maction) return false;
-        if(msnake->hitItem() != nullptr )
-        {
-            switch (msnake->hitItem()->getName()) {
-                case FOOD:{
-                    location = state->createRandomLoc();
-                    while(msnake->isPartOfSnake(location))
-                        location = state->createRandomLoc();
-                    state->createItem(BASIC, msnake->getBody()[0], 0);
-                    state->createItem(FOOD, location, 1);
-                    break;
-                }
-                case OBSTACLE:
-                case WALL: {
-                    // dead
-                    return false;
-                }
-                default:
-                    throw "Error: unknown item type";
-            }
-
-        }
-        // 陨石和沼泽的特殊效果判断
-        /*for (vector<Item*> row: *state->getMapPtr()) {
-            for (auto item: row) {
-                if (item->getName() == AEROLITE || item->getName() == MARSH) {
-                    // 对每个陨石看是否砸到了蛇; 对每个沼泽看是否有蛇在上面
-                    // 砸到了任何一部分则另一个函数一定返回 nullptr, 因此不用 if-else 判断
-                    item->action(item->hitHeadSnake(state->snakes));
-                    item->action(item->hitBodySnake(state->snakes));
-                }
-            }
-        }*/
-        return true;
-    }
+    return true;
+}

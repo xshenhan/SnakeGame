@@ -69,7 +69,7 @@ bool Snake::operator == (const Snake* other) {
 
 int Snake::getLength()
 {
-    return length;
+    return body.size();
 }
 
 int Snake::getHealth()

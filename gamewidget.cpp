@@ -81,16 +81,16 @@ void GameWidget::paintEvent(QPaintEvent *ev)
             }
         }
     }
-    // if(!game_over) game_over = !game->runGame();
-    // if(game_over && !is_emit) {
-    //     emit(gameover());
-    //     is_emit = true;
-    // }
-    // QThread::msleep(5);
-    // if(!game_over) {
-    //     cnt_time++;
-    //     update();
-    // }
+//    if(!game_over) game_over = !game->runGame();
+//    if(game_over && !is_emit) {
+//        emit(gameover());
+//        is_emit = true;
+//    }
+//    QThread::msleep(5);
+//    if(!game_over) {
+//        cnt_time++;
+//        update();
+//    }
     return QWidget::paintEvent(ev);
 }
 
