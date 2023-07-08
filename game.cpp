@@ -267,6 +267,7 @@ void TestAISnake::initializeGame(int level) {
 }
 
 bool TestAISnake::runGame() {
+    Loc location;
     for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
         Snake *snake = state->getSnakes()[i];
         // 未到时钟周期, 更改 cycle_record 并退出
@@ -289,6 +290,7 @@ bool TestAISnake::runGame() {
             case FOOD:
             {
                 hit_item->action(snake);
+
                 do {
                     location = state->createRandomLoc();
                 } while (snake->isPartOfSnake(location));
@@ -343,7 +345,7 @@ Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level3::initializeGame(int level) {
 
-    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level3.txt"))
+    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level3.txt"))
         assert(false);
     this->level = level;
 }
@@ -352,7 +354,7 @@ Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info)
 Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level4::initializeGame(int level) {
 
-    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level4.txt"))
+    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level4.txt"))
         assert(false);
     this->level = level;
     queue<Loc> path;
@@ -370,7 +372,7 @@ Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level5::initializeGame(int level) {
 
-    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level5.txt"))
+    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level5.txt"))
         assert(false);
     this->level = level;
 }
