@@ -119,14 +119,6 @@ Loc Snake::nextLoc()
 
 bool Snake::move()
 {
-    /* ===== 全局时钟走过 (12 - speed) 个周期蛇才会进行动作 ===== */
-    if (cycle_recorder != (12 - speed)) {
-        cycle_recorder += 1;
-        return false;
-    } else {
-        cycle_recorder = 1;
-    }
-    /* ====================================================== */
     Loc new_head = nextLoc();
     body.insert(body.begin(), new_head);
     body.pop_back();
@@ -140,6 +132,9 @@ bool Snake::move()
 Item *Snake::hitItem()
 {
     Loc head = body[0];
+    if (this->magnetic <= 0) {
+
+    }
     if(!isWithin(head.first, 0, item_map_ptr->size()-1) || !isWithin(head.second, 0, (*item_map_ptr)[0].size()-1))
         return nullptr;
     return (*item_map_ptr)[body[0].first][body[0].second];
@@ -290,6 +285,18 @@ int Snake::getKilled()
 void Snake::addSpeed(int adding)
 {
     this->speed += adding;
+}
+
+bool Snake::ableMove()
+{
+    // ===== 全局时钟走过 (12 - speed) 个周期蛇才会进行动作
+    if (cycle_recorder != (12 - speed)) {
+        cycle_recorder += 1;
+        return false;
+    } else {
+        cycle_recorder = 1;
+        return true;
+    }
 }
 
 void Snake::setMagnetic(int effective_time) {

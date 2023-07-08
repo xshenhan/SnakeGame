@@ -69,9 +69,22 @@ Grid* Field::getMapPtr()
 Loc Field::createRandomLoc()
 {
     srand(time(NULL));
-    int x = rand() % this->height;
-    int y = rand() % this->width;
+    int x, y;
+    do {
+        x = rand() % this->height;
+        y = rand() % this->width;
+    } while (existFood(make_pair(x, y)));
     return make_pair(x, y);
+}
+
+void Field::deleteItem(Loc location)
+{
+    this->item_map[location.first][location.second] = nullptr;
+}
+
+bool Field::existFood(Loc location)
+{
+    return (this->item_map[location.first][location.second] != nullptr);
 }
 
 std::vector<Snake *> Field::getSnakes()

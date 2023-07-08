@@ -44,7 +44,6 @@ bool Game::snakeAction(Snake *snake)
 //        throw "AI snake not implemented";
     }
 
-    // Snake* msnake = state->getSnakes()[0];
     snake->move();   // 完成移动
     if (snake->hitSelf() || snake->hitEdge()) {
         return false;
@@ -61,61 +60,52 @@ bool Game::snakeAction(Snake *snake)
 
 bool Game::runGame()
 {
-    //clock.run();
-
-    // 每个时钟周期设置物体
-    // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮snakeAction周期
-    // 一些应该从文件中读取的数据 ===================== //
     Loc location;
-    // ============================================= //
-    /*if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
-            state->createItem(type, location, info);
-    }*/
-
-    // 所有蛇进行行动
-    for (int i=0; i<state->getSnakes().size(); ++i) {
-        // 蛇的行动 和 所撞物体产生的效果
+    // 所有蛇进行行动 和 所撞物体产生的效果
+    for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
         Snake *snake = state->getSnakes()[i];
-        
-        if (i == 0) {
-            if (!snakeAction(snake)) {  // 玩家没有成功移动, 直接结束游戏
-                return false;
-            }
-        } else {
-            snakeAction(snake);
+        // 未到时钟周期, 更改 cycle_record 并退出
+        bool snake_action_ability = snake->ableMove();
+        if (!snake_action_ability) {
+            continue;
+        }
+
+        bool move_success = snakeAction(snake);
+        if (i == 0 && !move_success) {
+            return false;   // 玩家没有成功移动, 直接结束游戏
         }
         snake->recover();
 
-        if(snake->hitItem() != nullptr ) {
-            switch (snake->hitItem()->getName()) {
-                case FOOD:{
-                    snake->hitItem()->action(snake);
+        Item* hit_item = snake->hitItem();
+        Loc item_location = snake->getBody()[0];
+        if(hit_item != nullptr)
+        {
+            switch (hit_item->getName()) {
+            case FOOD:
+            {
+                hit_item->action(snake);
+                do {
                     location = state->createRandomLoc();
-                    while(snake->isPartOfSnake(location))
-                        location = state->createRandomLoc();
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    state->createItem(FOOD, location, 1);
-                    break;
-                }
-                case WALL: {
-                    // dead
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    return false;
-                }
-                case FIRSTAID:
-                case OBSTACLE: {
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    if (snake->getHealth() <= 0 && snake->death()) {
-                        return false;
-                    }
-                    break;
-                }
-                case MARSH:
-                    break;
-                default:
-                    throw "Error: unknown item type";
+                } while (snake->isPartOfSnake(location));
+                state->deleteItem(item_location);
+                state->createItem(FOOD, location, 1);
+                break;
+            }
+            case MAGNET:
+            case SHIELD:
+            case FIRSTAID:
+            case OBSTACLE:
+            {
+                hit_item->action(snake);
+            }
+            case WALL:
+            {
+                hit_item->action(snake);
+                return false;
+            }
             }
         }
+
         if(snake->touchMarsh() != nullptr)
         {
             test = 0;
@@ -127,36 +117,6 @@ bool Game::runGame()
         }
         snake->recover();
 
-        if(snake->hitItem() != nullptr ) {
-            switch (snake->hitItem()->getName()) {
-                case FOOD:{
-                    snake->hitItem()->action(snake);
-                    location = state->createRandomLoc();
-                    while(snake->isPartOfSnake(location))
-                        location = state->createRandomLoc();
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    state->createItem(FOOD, location, 1);
-                    break;
-                }
-                case WALL: {
-                    // dead
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    return false;
-                }
-                case FIRSTAID:
-                case OBSTACLE: {
-                    state->createItem(BASIC, snake->getBody()[0], 0);
-                    if (snake->getHealth() <= 0 && snake->death()) {
-                        return false;
-                    }
-                    break;
-                }
-                case MARSH:
-                    break;
-                default:
-                    throw "Error: unknown item type";
-            }
-        }
         if(snake->touchMarsh() != nullptr)
         {
             test = 0;
@@ -325,11 +285,6 @@ bool TestAISnake::runGame() {
         // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮周期
         // 一些应该从文件中读取的数据 ===================== //
         Loc location;
-        // ============================================= //
-        /*if (type != BASIC) {    // 非 BASIC 的物体都会被设到地图上
-                state->createItem(type, location, info);
-        }*/
-
         // 所有蛇进行行动
         bool maction = true;
         Snake* msnake = state->getSnakes()[0];
@@ -375,7 +330,7 @@ Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level3::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level3.txt"))
+    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level3.txt"))
         assert(false);
     this->level = level;
 }
@@ -384,7 +339,7 @@ Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info)
 Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level4::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level4.txt"))
+    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level4.txt"))
         assert(false);
     this->level = level;
     queue<Loc> path;
