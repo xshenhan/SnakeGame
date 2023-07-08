@@ -129,18 +129,6 @@ bool Game::runGame()
         }
 
     }
-
-    // 陨石和沼泽的特殊效果判断
-    /*for (vector<Item*> row: *state->getMapPtr()) {
-        for (auto item: row) {
-            if (item->getName() == AEROLITE || item->getName() == MARSH) {
-                // 对每个陨石看是否砸到了蛇; 对每个沼泽看是否有蛇在上面
-                // 砸到了任何一部分则另一个函数一定返回 nullptr, 因此不用 if-else 判断
-                item->action(item->hitHeadSnake(state->snakes));
-                item->action(item->hitBodySnake(state->snakes));
-            }
-        }
-    }*/
     return true;
 }
 
@@ -279,50 +267,75 @@ void TestAISnake::initializeGame(int level) {
 }
 
 bool TestAISnake::runGame() {
-        //clock.run();
+    for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
+        Snake *snake = state->getSnakes()[i];
+        // 未到时钟周期, 更改 cycle_record 并退出
+        bool snake_action_ability = snake->ableMove();
+        if (!snake_action_ability) {
+            continue;
+        }
 
-        // 每个时钟周期设置物体
-        // 如果这个周期不想设置, 可以把 type 设成 BASIC, 则会跳过这轮周期
-        // 一些应该从文件中读取的数据 ===================== //
-        Loc location;
-        // 所有蛇进行行动
-        bool maction = true;
-        Snake* msnake = state->getSnakes()[0];
-        maction = snakeAction(msnake);
-        if(!maction) return false;
-        if(msnake->hitItem() != nullptr )
+        bool move_success = snakeAction(snake);
+        if (i == 0 && !move_success) {
+            return false;   // 玩家没有成功移动, 直接结束游戏
+        }
+        snake->recover();
+
+        Item* hit_item = snake->hitItem();
+        Loc item_location = snake->getBody()[0];
+        if(hit_item != nullptr)
         {
-            switch (msnake->hitItem()->getName()) {
-                case FOOD:{
+            switch (hit_item->getName()) {
+            case FOOD:
+            {
+                hit_item->action(snake);
+                do {
                     location = state->createRandomLoc();
-                    while(msnake->isPartOfSnake(location))
-                        location = state->createRandomLoc();
-                    state->createItem(BASIC, msnake->getBody()[0], 0);
-                    state->createItem(FOOD, location, 1);
-                    break;
-                }
-                case WALL: {
-                    // dead
-                    return false;
-                }
-                default:
-                    throw "Error: unknown item type";
+                } while (snake->isPartOfSnake(location));
+                state->deleteItem(item_location);
+                state->createItem(FOOD, location, 1);
+                break;
             }
+            case MAGNET:
+            case SHIELD:
+            case FIRSTAID:
+            case OBSTACLE:
+            {
+                hit_item->action(snake);
+            }
+            case WALL:
+            {
+                hit_item->action(snake);
+                return false;
+            }
+            }
+        }
+
+        if(snake->touchMarsh() != nullptr)
+        {
+            test = 0;
+            Marsh * msh = snake->touchMarsh();
+            msh->action(snake);
+        }
+        else {
+            test = 1;
+        }
+        snake->recover();
+
+        if(snake->touchMarsh() != nullptr)
+        {
+            test = 0;
+            Marsh * msh = snake->touchMarsh();
+            msh->action(snake);
+        }
+        else {
+            test = 1;
 
         }
-        // 陨石和沼泽的特殊效果判断
-        /*for (vector<Item*> row: *state->getMapPtr()) {
-            for (auto item: row) {
-                if (item->getName() == AEROLITE || item->getName() == MARSH) {
-                    // 对每个陨石看是否砸到了蛇; 对每个沼泽看是否有蛇在上面
-                    // 砸到了任何一部分则另一个函数一定返回 nullptr, 因此不用 if-else 判断
-                    item->action(item->hitHeadSnake(state->snakes));
-                    item->action(item->hitBodySnake(state->snakes));
-                }
-            }
-        }*/
-        return true;
+
     }
+    return true;
+}
 
 Level3::Level3(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
 
@@ -349,4 +362,15 @@ void Level4::initializeGame(int level) {
     path.push(make_pair(30, 15));
     Snake* snake = new WalkingSnake(path, {10, 20}, 5, 1, UP, this->state->getMapPtr());
     this->state->addSnake(snake);
+}
+
+Level5::Level5(GameMode game_mode, int height, int width, std::vector<int> info): Game(game_mode, height, width, info){}
+
+Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
+
+void Level5::initializeGame(int level) {
+
+    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level5.txt"))
+        assert(false);
+    this->level = level;
 }
