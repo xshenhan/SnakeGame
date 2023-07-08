@@ -53,10 +53,10 @@ Snake::Snake(Loc head, int length, int max_health, Direction direction, Grid* it
 }
 
 bool Snake::operator == (const Snake* other) {
-    if (this->length != other->length) {
+    if (this->getLength() != other->getLength()) {
         return false;
     }
-    for (int i=0; i<length; ++i) {
+    for (int i=0; i<getLength(); ++i) {
         if (this->body[i] != other->body[i]) {
             return false;
         }
@@ -64,12 +64,12 @@ bool Snake::operator == (const Snake* other) {
     return true;
 }
 
-int Snake::getLength()
+int Snake::getLength() const
 {
     return body.size();
 }
 
-int Snake::getHealth()
+int Snake::getHealth() const
 {
     return health;
 }
@@ -132,9 +132,6 @@ bool Snake::move()
 Item *Snake::hitItem()
 {
     Loc head = body[0];
-    if (this->magnetic <= 0) {
-
-    }
     if(!isWithin(head.first, 0, item_map_ptr->size()-1) || !isWithin(head.second, 0, (*item_map_ptr)[0].size()-1))
         return nullptr;
     return (*item_map_ptr)[body[0].first][body[0].second];
@@ -168,7 +165,7 @@ bool Snake::hitOtherSnake(vector<Snake*> snakes) {
 
 Marsh* Snake::touchMarsh()
 {
-    for(int i = 0; i < length; i++)
+    for(int i = 0; i < getLength(); i++)
     {
         Item* it = (*item_map_ptr)[body[i].first][body[i].second];
         if(it != nullptr && it->getName() == MARSH)
@@ -188,7 +185,7 @@ bool Snake::hitEdge()
 
 bool Snake::isPartOfSnake(Loc loc)
 {
-    for(int i = 0; i < length; i++)
+    for(int i = 0; i < getLength(); i++)
     {
         Loc mloc = body[i];
         if(mloc == loc)
@@ -200,9 +197,9 @@ bool Snake::isPartOfSnake(Loc loc)
 void Snake::addLength(int adding)
 {
     // second last X/Y 倒数第二段身体
-    int sl_x = body[length-2].first, sl_y = body[length-2].second;
+    int sl_x = body[getLength()-2].first, sl_y = body[getLength()-2].second;
     // last X/Y 最后一段身体
-    int l_x = body[length-1].first, l_y = body[length-1].second;
+    int l_x = body[getLength()-1].first, l_y = body[getLength()-1].second;
 
     // new - last = last - slast
     // new = last + delta
@@ -219,7 +216,7 @@ void Snake::addLength(int adding)
         }
         body.push_back(make_pair(newX, newY));
     }
-    length++;
+    length += adding;
 }
 
 void Snake::addHealth(int adding) {
@@ -258,6 +255,7 @@ bool Snake::death()
         return false;
     } else {
         // 返回接口 传递死亡的信息
+        health = 0;
         return true;
     }
 }
