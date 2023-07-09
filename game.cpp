@@ -303,11 +303,12 @@ bool TestAISnake::runGame() {
             continue;   // 电脑蛇死亡后不再有任何操作
         }
 
-        // 未到时钟周期, 更改 cycle_record 并退出
+        // 未到时钟周期, 更改 cycle_record 并退出 -------------
         bool snake_action_ability = snake->ableMove();
         if (!snake_action_ability) {
             continue;
         }
+        // ------------------------------------------------
 
         bool move_success = snakeAction(snake);
         if (i == 0 && !move_success) {
