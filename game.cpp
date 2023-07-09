@@ -39,6 +39,7 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
 
 bool Game::snakeAction(Snake *snake)
 {
+    if (snake->getHealth() <= 0) assert(false);
     if (snake->isAI()){
         snake->changeDireciton(snake->act(this->getState()));
 //        throw "AI snake not implemented";
@@ -74,7 +75,6 @@ bool Game::runGame()
         if (i == 0 && !move_success) {
             return false;   // 玩家没有成功移动, 直接结束游戏
         }
-        snake->recover();
 
         Item* hit_item = snake->hitItem();
         Loc item_location = snake->getBody()[0];
@@ -97,6 +97,7 @@ bool Game::runGame()
             case OBSTACLE:
             {
                 hit_item->action(snake);
+                break;
             }
             case WALL:
             {
@@ -116,18 +117,6 @@ bool Game::runGame()
             test = 1;
         }
         snake->recover();
-
-        if(snake->touchMarsh() != nullptr)
-        {
-            test = 0;
-            Marsh * msh = snake->touchMarsh();
-            msh->action(snake);
-        }
-        else {
-            test = 1;
-
-        }
-
     }
     return true;
 }
@@ -270,6 +259,10 @@ bool TestAISnake::runGame() {
     Loc location;
     for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
         Snake *snake = state->getSnakes()[i];
+        if (snake->getHealth() <= 0) {
+            continue;   // 电脑蛇死亡后不再有任何操作
+        }
+
         // 未到时钟周期, 更改 cycle_record 并退出
         bool snake_action_ability = snake->ableMove();
         if (!snake_action_ability) {
@@ -280,7 +273,6 @@ bool TestAISnake::runGame() {
         if (i == 0 && !move_success) {
             return false;   // 玩家没有成功移动, 直接结束游戏
         }
-        snake->recover();
 
         Item* hit_item = snake->hitItem();
         Loc item_location = snake->getBody()[0];
@@ -304,6 +296,7 @@ bool TestAISnake::runGame() {
             case OBSTACLE:
             {
                 hit_item->action(snake);
+                break;
             }
             case WALL:
             {

@@ -91,8 +91,11 @@ void GameWidget::paintEvent(QPaintEvent *ev)
     }
     painter.setBrush(Qt::yellow);
     painter.setPen(Qt::yellow);
-    for(int i = 1; i < game->getState()->getSnakes().size(); i++){
+    for(unsigned int i = 1; i < game->getState()->getSnakes().size(); i++){
         Snake* osnake = game->getState()->getSnakes()[i];
+        if (osnake->getHealth() <= 0) {
+            continue;
+        }
         for (std::size_t i = 0; i < osnake->getLength(); i++) {
             QRect rect = getRect(osnake->getBody()[i].first, osnake->getBody()[i].second);
             painter.drawRect(rect);

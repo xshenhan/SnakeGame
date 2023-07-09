@@ -18,8 +18,8 @@ public:
     void initialize();
     bool operator == (const Snake* other);
 
-    int getLength();
-    int getHealth();
+    int getLength() const;
+    int getHealth() const;
     std::vector<Loc> &getBody();
 
     void changeDireciton(Direction new_direction);
