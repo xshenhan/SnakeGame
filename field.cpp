@@ -66,6 +66,17 @@ Grid* Field::getMapPtr()
     return &item_map;
 }
 
+void Field::clearSnake()
+{
+    for (auto snake_ptr=snakes.begin(); snake_ptr!=snakes.end(); ) {
+        if ((*snake_ptr)->getHealth() <= 0) {
+            snakes.erase(snake_ptr);
+        } else {
+            snake_ptr++;
+        }
+    }
+}
+
 Loc Field::createRandomLoc()
 {
     srand(time(NULL));

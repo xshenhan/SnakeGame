@@ -3,8 +3,10 @@
 
 #include <vector>
 #include "item.h"
+#include "snake.h"
 
 typedef std::vector<std::vector<Item*>> Grid;
+
 
 class Field
 {
@@ -21,6 +23,8 @@ public:
     int getHeight();
     int getWidth();
     Grid* getMapPtr();
+
+    void clearSnake();
 
     std::vector<Snake*> getSnakes();
     void addSnake(Snake* snake_ptr);
