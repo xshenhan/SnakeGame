@@ -165,7 +165,7 @@ bool Snake::hitOtherSnake(vector<Snake*> snakes) {
 
 Marsh* Snake::touchMarsh()
 {
-    for(int i = 0; i < length; i++)
+    for(int i = 0; i < getLength(); i++)
     {
         Item* it = (*item_map_ptr)[body[i].first][body[i].second];
         if(it != nullptr && it->getName() == MARSH)

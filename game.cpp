@@ -5,7 +5,7 @@
 #include "queue"
 using namespace std;
 typedef pair<int, int> Loc;
-Game::Game(GameMode playMode, int height, int width, std::vector<int> info) :
+Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
     level(1),
     clock(Clock(0, "global", 50)),// 全局时钟从 0 开始计时, 每 50ms 运行一次
     game_mode(game_mode)
@@ -73,7 +73,7 @@ bool Game::runGame()
             continue;
         }
 
-        // 判断是否存活, 如果存活判断是否成功移动没有碰到障碍物
+        // 判断是否存活, 如果存活判断是否成功移动没有碰到障碍物 ----------
         bool alive = snake->getHealth() > 0;
         bool move_success = false;
         if (alive) {
@@ -83,7 +83,7 @@ bool Game::runGame()
             if (snake->isAI()) { continue; }
             else { return false; }
         }
-
+        // -------------------------------------------------------
 
         snake->recover();
         Item* hit_item = snake->hitItem();
@@ -105,17 +105,26 @@ bool Game::runGame()
             case SHIELD:
             case FIRSTAID:
             case OBSTACLE:
+            case WALL:
             {
                 hit_item->action(snake);
                 break;
             }
-            case WALL:
-            {
-                hit_item->action(snake);
-                return false;
-            }
+            default:    // BASIC, AEROLITE, MARSH
+                break;
             }
         }
+
+        // 检查死亡 ----------------------
+        if (snake->getHealth() <= 0) {
+            if (snake->isAI()) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+        // ------------------------------
+
         if (snake->ableMagnetic()) {
             // 有吸铁石, 吃九宫格内且不在蛇身上的位置
             for (int i=-1; i<=1; ++i) {
