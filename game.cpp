@@ -46,14 +46,12 @@ bool Game::snakeAction(Snake *snake)
 
     snake->move();   // 完成移动
     if (snake->hitSelf() || snake->hitEdge()) {
-        snake->death();
-        return false;
+        bool dead = snake->death();
+        if (dead) return false;
     }
     if (snake->hitOtherSnake(state->getSnakes())) {
         bool dead = snake->death();
-        if (dead && snake == state->getSnakes()[0]) {
-            return false;
-        }
+        if (dead) return false;
     }
     return true;
     // TODO: 判断胜负
@@ -61,6 +59,9 @@ bool Game::snakeAction(Snake *snake)
 
 bool Game::runGame()
 {
+    // 删除血量为 0 的蛇
+    getState()->clearSnake();
+
     Loc location;
     // 所有蛇进行行动 和 所撞物体产生的效果
     for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
@@ -72,16 +73,17 @@ bool Game::runGame()
             continue;
         }
 
-        bool move_success = snakeAction(snake);
-        if (i == 0 && !move_success) {
-            return false;   // 玩家没有成功移动, 直接结束游戏
+        // 判断是否存活, 如果存活判断是否成功移动没有碰到障碍物
+        bool alive = snake->getHealth() > 0;
+        bool move_success = false;
+        if (alive) {
+            move_success = snakeAction(snake);
         }
-
-        // 如果死亡了就不再找物品/接收指令
-        if (snake->getHealth() <= 0) {
+        if (!move_success) {
             if (snake->isAI()) { continue; }
             else { return false; }
         }
+
 
         snake->recover();
         Item* hit_item = snake->hitItem();
@@ -146,7 +148,6 @@ bool Game::runGame()
         else {
             test = 1;
         }
-        //snake->recover();
     }
     return true;
 }
