@@ -39,10 +39,11 @@ public:
     void incKilled();
     int getEaten();
     int getKilled();
-    // 设置吸铁石能力
-    void setMagnetic(int);
-    // 设置护盾复活能力
-    void setRevival(int);
+
+
+    void setMagnetic(int);  // 设置吸铁石能力
+    bool ableMagnetic();
+    void setRevival(int);   // 设置护盾复活能力
 
     void addSpeed(int);
     bool ableMove();

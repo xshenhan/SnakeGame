@@ -1,7 +1,3 @@
-//
-// Created by lenovo on 2023/7/3.
-//
-
 #ifndef SNAKE_SRC_FULL_AISNAKE_H
 #define SNAKE_SRC_FULL_AISNAKE_H
 #include "snake.h"
@@ -42,5 +38,3 @@ public:
     void setPath(std::queue<Loc> path);
 };
 #endif //SNAKE_SRC_FULL_AISNAKE_H
-
-

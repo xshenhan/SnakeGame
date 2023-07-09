@@ -53,10 +53,10 @@ Snake::Snake(Loc head, int length, int max_health, Direction direction, Grid* it
 }
 
 bool Snake::operator == (const Snake* other) {
-    if (this->getLength() != other->getLength()) {
+    if (this->length != other->length) {
         return false;
     }
-    for (int i=0; i<getLength(); ++i) {
+    for (int i=0; i<length; ++i) {
         if (this->body[i] != other->body[i]) {
             return false;
         }
@@ -165,7 +165,7 @@ bool Snake::hitOtherSnake(vector<Snake*> snakes) {
 
 Marsh* Snake::touchMarsh()
 {
-    for(int i = 0; i < getLength(); i++)
+    for(int i = 0; i < length; i++)
     {
         Item* it = (*item_map_ptr)[body[i].first][body[i].second];
         if(it != nullptr && it->getName() == MARSH)
@@ -301,6 +301,11 @@ void Snake::setMagnetic(int effective_time) {
     this->magnetic = effective_time;
 }
 
+bool Snake::ableMagnetic()
+{
+    return (this->magnetic > 0);
+}
+
 void Snake::setRevival(int effective_time) {
     this->revival = effective_time;
 }
@@ -308,8 +313,6 @@ void Snake::setRevival(int effective_time) {
 void Snake::recover()
 {
     speed = 6;
-    magnetic = 0;
-    revival = 0;
 }
 
 bool isWithin(int target, int low, int high)

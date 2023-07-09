@@ -25,7 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        AISnake.cpp \
+        aisnake.cpp \
         clock.cpp \
         dialog.cpp \
         field.cpp \
@@ -38,7 +38,7 @@ SOURCES += \
         snake.cpp
 
 HEADERS += \
-        AISnake.h \
+        aisnake.h \
         clock.h \
         dialog.h \
         field.h \
