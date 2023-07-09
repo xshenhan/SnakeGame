@@ -1,7 +1,7 @@
 #include "game.h"
 #include <QThread>
 #include <fstream>
-#include "AISnake.h"
+#include "aisnake.h"
 #include "queue"
 using namespace std;
 typedef pair<int, int> Loc;
@@ -39,14 +39,14 @@ Game::Game(Field *state, GameMode game_mode, std::vector<int> info) :
 
 bool Game::snakeAction(Snake *snake)
 {
-    if (snake->getHealth() <= 0) assert(false);
+    //if (snake->getHealth() <= 0) assert(false);
     if (snake->isAI()){
         snake->changeDireciton(snake->act(this->getState()));
-//        throw "AI snake not implemented";
     }
 
     snake->move();   // 完成移动
     if (snake->hitSelf() || snake->hitEdge()) {
+        snake->death();
         return false;
     }
     if (snake->hitOtherSnake(state->getSnakes())) {
@@ -65,6 +65,7 @@ bool Game::runGame()
     // 所有蛇进行行动 和 所撞物体产生的效果
     for (unsigned int i=0; i<state->getSnakes().size(); ++i) {
         Snake *snake = state->getSnakes()[i];
+
         // 未到时钟周期, 更改 cycle_record 并退出
         bool snake_action_ability = snake->ableMove();
         if (!snake_action_ability) {
@@ -75,9 +76,14 @@ bool Game::runGame()
         if (i == 0 && !move_success) {
             return false;   // 玩家没有成功移动, 直接结束游戏
         }
+
+        // 如果死亡了就不再找物品/接收指令
+        if (snake->getHealth() <= 0) {
+            if (snake->isAI()) { continue; }
+            else { return false; }
+        }
+
         snake->recover();
-
-
         Item* hit_item = snake->hitItem();
         Loc item_location = snake->getBody()[0];
         if(hit_item != nullptr)

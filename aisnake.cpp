@@ -1,7 +1,3 @@
-//
-// Created by lenovo on 2023/7/3.
-//
-
 #include "aisnake.h"
 #include <queue>
 #include <set>

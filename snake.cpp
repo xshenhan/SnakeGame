@@ -185,7 +185,7 @@ bool Snake::hitEdge()
 
 bool Snake::isPartOfSnake(Loc loc)
 {
-    for(int i = 0; i < length; i++)
+    for(int i = 0; i < getLength(); i++)
     {
         Loc mloc = body[i];
         if(mloc == loc)
@@ -197,9 +197,9 @@ bool Snake::isPartOfSnake(Loc loc)
 void Snake::addLength(int adding)
 {
     // second last X/Y 倒数第二段身体
-    int sl_x = body[getLength()-2].first, sl_y = body[length-2].second;
+    int sl_x = body[getLength()-2].first, sl_y = body[getLength()-2].second;
     // last X/Y 最后一段身体
-    int l_x = body[length-1].first, l_y = body[length-1].second;
+    int l_x = body[getLength()-1].first, l_y = body[getLength()-1].second;
 
     // new - last = last - slast
     // new = last + delta
@@ -216,7 +216,7 @@ void Snake::addLength(int adding)
         }
         body.push_back(make_pair(newX, newY));
     }
-    length++;
+    length += adding;
 }
 
 void Snake::addHealth(int adding) {
