@@ -46,6 +46,7 @@ HEADERS += \
         gamewidget.h \
         item.h \
         mainwindow.h \
+        path.h \
         qlevel.h \
         snake.h
 

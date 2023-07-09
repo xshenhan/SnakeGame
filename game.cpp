@@ -3,6 +3,7 @@
 #include <fstream>
 #include "aisnake.h"
 #include "queue"
+#include "path.h"
 using namespace std;
 typedef pair<int, int> Loc;
 Game::Game(GameMode game_mode, int height, int width, std::vector<int> info) :
@@ -275,7 +276,7 @@ AddWallGame::AddWallGame(Field *state, GameMode game_mode, std::vector<int> info
 
 void AddWallGame::initializeGame(int level) {
 
-    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\addwallgame.txt"))
+    if (!this->loadMap(WORKING_DIR + "\\map\\addwallgame.txt"))
         assert(false);
     this->level = level;
 }
@@ -379,7 +380,7 @@ Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level3::initializeGame(int level) {
 
-    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level3.txt"))
+    if (!this->loadMap(WORKING_DIR + "\\map\\level3.txt"))
         assert(false);
     this->level = level;
 }
@@ -388,7 +389,7 @@ Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info)
 Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level4::initializeGame(int level) {
 
-    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level4.txt"))
+    if (!this->loadMap(WORKING_DIR + "\\map\\level4.txt"))
         assert(false);
     this->level = level;
     queue<Loc> path;
@@ -406,7 +407,7 @@ Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level5::initializeGame(int level) {
 
-    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level5.txt"))
+    if (!this->loadMap(WORKING_DIR + "\\map\\level5.txt"))
         assert(false);
     this->level = level;
 }
