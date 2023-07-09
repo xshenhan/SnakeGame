@@ -40,6 +40,10 @@ void Field::createItem(ItemType type, Loc location, int info)
         break;
     case MARSH:
         item = new Marsh(location);
+        break;
+    case MAGNET:
+        item = new Magnet(location, info);
+        break;
     }
     item_map[location.first][location.second] = item;
 }
@@ -48,6 +52,9 @@ void Field::createItem(ItemType type, Loc location, int info)
 
 Item *Field::getItem(size_t w, size_t h)
 {
+    if (w < 0 || w >= this->getWidth() || h < 0 || h >= this->getHeight()) {
+        return nullptr;
+    }
     return item_map[w][h];
 }
 

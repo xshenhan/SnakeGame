@@ -135,8 +135,10 @@ bool Game::runGame()
                         continue;
                     } else {
                         hit_item = getState()->getItem(check.first, check.second);
+                        if (hit_item == nullptr) continue;
                         switch (hit_item->getName()) {
                         case FOOD:
+                            hit_item->action(snake);
                             state->deleteItem(check);
                             break;
                         default:

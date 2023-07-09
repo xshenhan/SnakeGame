@@ -78,6 +78,11 @@ void GameWidget::paintEvent(QPaintEvent *ev)
                 QRect rect = getRect(i, j);
                 painter.drawRect(rect);
             }
+            if(mstate->getItemName(i, j) == MAGNET){
+                painter.setBrush(Qt::black);
+                QRect rect = getRect(i, j);
+                painter.drawRect(rect);
+            }
         }
     }
 

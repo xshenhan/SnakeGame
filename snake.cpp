@@ -214,6 +214,9 @@ void Snake::addLength(int adding)
             // 新坐标上有物体
             break;
         }
+        if (isPartOfSnake(make_pair(newX, newY))) {
+            break;
+        }
         body.push_back(make_pair(newX, newY));
     }
     length += adding;
