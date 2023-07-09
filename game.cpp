@@ -75,6 +75,8 @@ bool Game::runGame()
         if (i == 0 && !move_success) {
             return false;   // 玩家没有成功移动, 直接结束游戏
         }
+        snake->recover();
+
 
         Item* hit_item = snake->hitItem();
         Loc item_location = snake->getBody()[0];
@@ -106,17 +108,39 @@ bool Game::runGame()
             }
             }
         }
+        if (snake->ableMagnetic()) {
+            // 有吸铁石, 吃九宫格内且不在蛇身上的位置
+            for (int i=-1; i<=1; ++i) {
+                for (int j=-1; j<=1; ++j) {
+                    Loc check = make_pair(item_location.first + i, item_location.second + j);
+                    if (snake->isPartOfSnake(check)) {
+                        continue;
+                    } else {
+                        hit_item = getState()->getItem(check.first, check.second);
+                        switch (hit_item->getName()) {
+                        case FOOD:
+                            state->deleteItem(check);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+
 
         if(snake->touchMarsh() != nullptr)
         {
             test = 0;
-            Marsh * msh = snake->touchMarsh();
+            Marsh* msh = snake->touchMarsh();
             msh->action(snake);
         }
         else {
             test = 1;
         }
-        snake->recover();
+        //snake->recover();
     }
     return true;
 }
@@ -235,7 +259,7 @@ AddWallGame::AddWallGame(Field *state, GameMode game_mode, std::vector<int> info
 
 void AddWallGame::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\addwallgame.txt"))
+    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\addwallgame.txt"))
         assert(false);
     this->level = level;
 }
@@ -338,7 +362,7 @@ Level3::Level3(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level3::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level3.txt"))
+    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level3.txt"))
         assert(false);
     this->level = level;
 }
@@ -347,7 +371,7 @@ Level4::Level4(GameMode game_mode, int height, int width, std::vector<int> info)
 Level4::Level4(Field *state, GameMode game_mode, std::vector<int> info): Game(state, game_mode, info){}
 void Level4::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level4.txt"))
+    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level4.txt"))
         assert(false);
     this->level = level;
     queue<Loc> path;
@@ -365,7 +389,7 @@ Level5::Level5(Field *state, GameMode game_mode, std::vector<int> info): Game(st
 
 void Level5::initializeGame(int level) {
 
-    if (!this->loadMap("F:\\OneDrive - sjtu.edu.cn\\Documents\\university_life\\grade_one_summer\\snake_src_full\\map\\level5.txt"))
+    if (!this->loadMap("D:\\CaAr\\cpp_project\\snakegame_new\\map\\level5.txt"))
         assert(false);
     this->level = level;
 }
