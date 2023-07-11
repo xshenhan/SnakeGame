@@ -95,4 +95,12 @@ public:
     Level7(Field* state, GameMode game_mode, std::vector<int> info);
     virtual void initializeGame(int level);
 };
+
+class Level9: public Game
+{
+public:
+    Level9(GameMode game_mode, int height, int width, std::vector<int> info);
+    Level9(Field* state, GameMode game_mode, std::vector<int> info);
+    virtual void initializeGame(int level);
+};
 #endif // GAME_H
