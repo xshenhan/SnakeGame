@@ -32,6 +32,8 @@ public:
     int test = 1;
     int target_score = 0;
     int level = 1;
+    GameMode game_mode;
+    int target_time = 0;
 protected:
 
     int aerolite_counting = 2;
@@ -40,11 +42,11 @@ protected:
 
 
 
-    int target_time = 0;
+
 
     Clock clock;
     Field* state;    // state 里面有: [地图] [Item] [snakes]
-    GameMode game_mode;
+
 };
 
 
