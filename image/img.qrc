@@ -43,5 +43,9 @@
         <file>asteroid.png</file>
         <file>star.png</file>
         <file>warning.png</file>
+        <file>defeat.png</file>
+        <file>victory.png</file>
+        <file>explaination.png</file>
+        <file>tree.png</file>
     </qresource>
 </RCC>
